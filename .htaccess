@@ -1,0 +1,12 @@
+# College Face Recognition Attendance System
+# Basic Apache Configuration for XAMPP
+
+# Prevent directory browsing
+Options -Indexes
+
+# Charset
+AddDefaultCharset UTF-8
+
+# Custom error pages (optional)
+# ErrorDocument 404 /attendance2/index.php
+# ErrorDocument 500 /attendance2/index.php

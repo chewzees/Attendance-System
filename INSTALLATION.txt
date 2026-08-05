@@ -1,0 +1,285 @@
+================================================================================
+   COLLEGE FACE RECOGNITION ATTENDANCE SYSTEM v2.0
+   QUICK INSTALLATION GUIDE
+================================================================================
+
+📋 TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1. System Requirements
+2. Installation Steps
+3. Database Setup
+4. Configuration
+5. First Login
+6. Troubleshooting
+7. Support
+
+================================================================================
+1. SYSTEM REQUIREMENTS
+================================================================================
+
+SERVER REQUIREMENTS:
+- PHP 8.0 or higher
+- MySQL 5.7 or higher
+- Apache 2.4 or higher
+- 2GB RAM minimum (4GB recommended)
+- 500MB free disk space
+
+CLIENT REQUIREMENTS:
+- Modern browser (Chrome, Firefox, Safari, Edge - latest version)
+- Webcam (built-in or external)
+- Internet connection (for face-api.js library)
+- Screen resolution: 1280x720 minimum
+
+================================================================================
+2. INSTALLATION STEPS
+================================================================================
+
+STEP 1: INSTALL XAMPP
+----------------------
+1. Download XAMPP from https://www.apachefriends.org
+2. Install to C:\xampp (Windows) or /Applications/XAMPP (Mac)
+3. Launch XAMPP Control Panel
+4. Start Apache and MySQL services
+
+STEP 2: EXTRACT PROJECT FILES
+------------------------------
+1. Extract the attendance2.zip file
+2. Copy the 'attendance2' folder to:
+   Windows: C:\xampp\htdocs\
+   Mac: /Applications/XAMPP/htdocs/
+
+STEP 3: VERIFY FILE STRUCTURE
+------------------------------
+Your htdocs folder should look like:
+C:\xampp\htdocs\attendance2\
+├── api/
+├── assets/
+├── config/
+├── database/
+├── index.php
+├── register.php
+├── face_recognition.php
+├── student_portal.php
+├── professor_dashboard.php
+├── admin.php
+└── README.md
+
+================================================================================
+3. DATABASE SETUP
+================================================================================
+
+OPTION A: USING PHPMYADMIN (RECOMMENDED)
+-----------------------------------------
+1. Open browser and go to: http://localhost/phpmyadmin
+2. Click "Import" tab at the top
+3. Click "Choose File" button
+4. Navigate to: attendance2/database/schema.sql
+5. Click "Go" button at the bottom
+6. Wait for "Import has been successfully finished" message
+
+OPTION B: MANUAL SQL EXECUTION
+-------------------------------
+1. Open phpMyAdmin: http://localhost/phpmyadmin
+2. Click "SQL" tab
+3. Open schema.sql file in text editor
+4. Copy entire content
+5. Paste into SQL query box
+6. Click "Go"
+
+VERIFICATION:
+-------------
+After import, you should see these tables in 'attendance_system' database:
+✓ user_roles
+✓ users
+✓ courses
+✓ semesters
+✓ course_enrollment
+✓ lectures
+✓ attendance
+✓ lecture_attendance
+✓ leave_requests
+✓ notifications
+✓ attendance_logs
+✓ system_settings
+
+================================================================================
+4. CONFIGURATION
+================================================================================
+
+DATABASE CONFIGURATION:
+-----------------------
+File: config/database.php
+
+Default settings (works with XAMPP):
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'attendance_system');
+
+⚠️ ONLY CHANGE IF:
+- You have custom MySQL credentials
+- MySQL is running on different port
+- Using remote database server
+
+SYSTEM CONFIGURATION:
+---------------------
+All other settings can be configured from Admin Panel after installation.
+No need to edit code files.
+
+================================================================================
+5. FIRST LOGIN
+================================================================================
+
+STEP 1: ACCESS THE SYSTEM
+--------------------------
+Open browser and navigate to:
+http://localhost/attendance2/
+
+STEP 2: DEFAULT ADMIN CREDENTIALS
+----------------------------------
+The system comes with a default admin account:
+
+User ID: ADMIN001
+Email: admin@college.edu
+Password: admin123
+Role: Administrator
+
+⚠️ IMPORTANT: Change the password immediately after first login!
+
+STEP 3: INITIAL SETUP
+----------------------
+After logging in as admin:
+
+1. Go to Admin Panel (admin.php)
+2. Navigate to Settings tab
+3. Configure:
+   ✓ Attendance start/end times
+   ✓ Late threshold (default: 15 minutes)
+   ✓ Minimum attendance percentage (default: 75%)
+   ✓ Face recognition threshold (default: 0.6)
+   ✓ Email notifications (enable/disable)
+
+4. Go to Users tab
+5. Add professors and staff
+6. Professors can then add courses and students
+
+STEP 4: REGISTER FIRST STUDENT
+-------------------------------
+1. Go to Registration page: http://localhost/attendance2/register.php
+2. Fill in student details
+3. Capture face using webcam (3 samples recommended)
+4. Submit form
+5. Note the Parent Access Code
+
+STEP 5: TEST FACE RECOGNITION
+------------------------------
+1. Go to: http://localhost/attendance2/face_recognition.php
+2. Click "Start Recognition"
+3. Look at camera
+4. System should recognize the registered student
+5. Attendance will be marked automatically
+
+================================================================================
+6. TROUBLESHOOTING
+================================================================================
+
+PROBLEM: "Database connection failed"
+SOLUTION:
+- Check if MySQL is running in XAMPP Control Panel
+- Verify database 'attendance_system' exists in phpMyAdmin
+- Check credentials in config/database.php
+
+PROBLEM: Camera not working
+SOLUTION:
+- Grant camera permissions in browser
+- Chrome: Settings → Privacy → Site Settings → Camera
+- Firefox: Preferences → Privacy → Permissions → Camera
+- Check if camera is not used by another application
+
+PROBLEM: Face not recognized
+SOLUTION:
+- Ensure good lighting
+- Face camera directly
+- Remove sunglasses, mask, or hat
+- Try re-registering with better face samples
+- Lower recognition threshold in Admin Settings (0.4 recommended)
+
+PROBLEM: "Models not loading"
+SOLUTION:
+- Check internet connection (face-api.js requires CDN)
+- Clear browser cache
+- Try different browser
+- Check browser console for specific errors
+
+PROBLEM: Blank page or PHP errors
+SOLUTION:
+- Check if PHP version is 8.0 or higher
+- Enable error reporting:
+  Open index.php and add at top:
+  error_reporting(E_ALL);
+  ini_set('display_errors', 1);
+- Check Apache error logs in XAMPP
+
+PROBLEM: CSS not loading (page looks unstyled)
+SOLUTION:
+- Check if assets/css/style.css exists
+- Verify Apache is serving static files
+- Clear browser cache (Ctrl+F5)
+- Check browser console for 404 errors
+
+================================================================================
+7. SUPPORT
+================================================================================
+
+DOCUMENTATION:
+--------------
+Full documentation: README.md
+API documentation: api/ folder comments
+Database schema: database/schema.sql
+
+TESTING:
+--------
+Test all features in this order:
+1. ✓ Database connection (any page loads)
+2. ✓ Admin login (use default credentials)
+3. ✓ Student registration (register.php)
+4. ✓ Face recognition (face_recognition.php)
+5. ✓ Attendance marking (should auto-mark)
+6. ✓ View attendance (student_portal.php)
+7. ✓ Reports (admin.php → Reports tab)
+
+COMMON URLS:
+------------
+Main Dashboard:         http://localhost/attendance2/
+Registration:           http://localhost/attendance2/register.php
+Face Recognition:       http://localhost/attendance2/face_recognition.php
+Student Portal:         http://localhost/attendance2/student_portal.php
+Professor Dashboard:    http://localhost/attendance2/professor_dashboard.php
+Admin Panel:            http://localhost/attendance2/admin.php
+phpMyAdmin:            http://localhost/phpmyadmin
+
+SYSTEM HEALTH CHECK:
+--------------------
+✓ Apache running in XAMPP
+✓ MySQL running in XAMPP
+✓ Database 'attendance_system' exists
+✓ 12 tables created successfully
+✓ Default admin user exists
+✓ Can access http://localhost/attendance2/
+✓ Can access camera in browser
+✓ Internet connection active
+
+================================================================================
+
+🎉 CONGRATULATIONS!
+Your College Face Recognition Attendance System is now ready to use!
+
+📧 For additional support:
+Email: admin@college.edu
+
+⭐ If you found this system helpful, please share it with other institutions!
+
+================================================================================
+                        END OF INSTALLATION GUIDE
+================================================================================
+
