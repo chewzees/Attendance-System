@@ -1,0 +1,8 @@
+node_modules/
+docs/screenshots/node_modules/
+docs/screenshots/package-lock.json
+docs/screenshots/package.json
+docs/screenshots/capture.js
+docs/screenshots/capture-student.js
+*.zip
+.env

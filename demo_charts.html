@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Charts Demo - Live Preview</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+        
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .demo-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        .demo-header h1 {
+            color: #6366f1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .demo-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chart-card h2 {
+            color: #1f2937;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .chart-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .chart-controls button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.875rem;
+            border-radius: 6px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #374151;
+        }
+        
+        .chart-controls button:hover {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+        
+        .chart-controls button.active {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card .value {
+            color: #1f2937;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Demo Header -->
+        <div class="demo-header">
+            <h1><i class="fas fa-chart-line"></i> Attendance Charts - Live Demo</h1>
+            <p>Interactive charts showing attendance data visualization</p>
+            <p style="font-size: 0.9rem; color: #9ca3af; margin-top: 0.5rem;">
+                This is a demo with sample data. Import <code>database/demo_data_simple.sql</code> for real data.
+            </p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3><i class="fas fa-users"></i> Total Students</h3>
+                <div class="value">22</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-check-circle"></i> Today's Attendance</h3>
+                <div class="value">18</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-book"></i> Active Courses</h3>
+                <div class="value">16</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-percentage"></i> Attendance Rate</h3>
+                <div class="value">81.8%</div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <!-- Attendance Status Chart -->
+            <div class="chart-card">
+                <h2><i class="fas fa-chart-pie"></i> Attendance Status Breakdown</h2>
+                <div class="chart-controls">
+                    <button class="active" onclick="loadStatusChart('today')" id="btnToday">Today</button>
+                    <button onclick="loadStatusChart('week')" id="btnWeek">Week</button>
+                    <button onclick="loadStatusChart('month')" id="btnMonth">Month</button>
+                    <button onclick="loadStatusChart('all')" id="btnAll">All Time</button>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Attendance Trend Chart -->
+            <div class="chart-card">
+                <h2><i class="fas fa-chart-line"></i> Attendance Trend</h2>
+                <div class="chart-controls">
+                    <button class="active" onclick="loadTrendChart('week')" id="btnTrendWeek">Last 7 Days</button>
+                    <button onclick="loadTrendChart('month')" id="btnTrendMonth">Last 30 Days</button>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Department Chart -->
+            <div class="chart-card full-width">
+                <h2><i class="fas fa-chart-bar"></i> Department-wise Attendance</h2>
+                <div class="chart-wrapper" style="height: 350px;">
+                    <canvas id="departmentChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo data
+        const demoData = {
+            today: {
+                present: 12,
+                late: 4,
+                absent: 2,
+                excused: 0
+            },
+            week: {
+                present: 85,
+                late: 24,
+                absent: 11,
+                excused: 2
+            },
+            month: {
+                present: 320,
+                late: 95,
+                absent: 45,
+                excused: 8
+            },
+            allTime: {
+                present: 1500,
+                late: 420,
+                absent: 180,
+                excused: 35
+            },
+            weeklyTrend: [
+                { date: '2024-12-09', present: 15, late: 3, absent: 4 },
+                { date: '2024-12-10', present: 16, late: 4, absent: 2 },
+                { date: '2024-12-11', present: 14, late: 5, absent: 3 },
+                { date: '2024-12-12', present: 17, late: 3, absent: 2 },
+                { date: '2024-12-13', present: 15, late: 4, absent: 3 },
+                { date: '2024-12-16', present: 16, late: 3, absent: 3 },
+                { date: '2024-12-17', present: 18, late: 2, absent: 2 }
+            ],
+            monthlyTrend: [
+                { date: '2024-11-18', present: 14, late: 4, absent: 4 },
+                { date: '2024-11-19', present: 15, late: 3, absent: 4 },
+                { date: '2024-11-20', present: 16, late: 4, absent: 2 },
+                { date: '2024-11-21', present: 14, late: 5, absent: 3 },
+                { date: '2024-11-22', present: 17, late: 3, absent: 2 },
+                { date: '2024-11-25', present: 15, late: 4, absent: 3 },
+                { date: '2024-11-26', present: 16, late: 3, absent: 3 },
+                { date: '2024-11-27', present: 18, late: 2, absent: 2 },
+                { date: '2024-11-28', present: 15, late: 4, absent: 3 },
+                { date: '2024-11-29', present: 16, late: 3, absent: 3 },
+                { date: '2024-12-02', present: 14, late: 5, absent: 3 },
+                { date: '2024-12-03', present: 17, late: 3, absent: 2 },
+                { date: '2024-12-04', present: 15, late: 4, absent: 3 },
+                { date: '2024-12-05', present: 16, late: 3, absent: 3 },
+                { date: '2024-12-06', present: 18, late: 2, absent: 2 },
+                { date: '2024-12-09', present: 15, late: 3, absent: 4 },
+                { date: '2024-12-10', present: 16, late: 4, absent: 2 },
+                { date: '2024-12-11', present: 14, late: 5, absent: 3 },
+                { date: '2024-12-12', present: 17, late: 3, absent: 2 },
+                { date: '2024-12-13', present: 15, late: 4, absent: 3 }
+            ],
+            departments: [
+                { name: 'Computer Science', present: 95, late: 28, absent: 12 },
+                { name: 'Electronics', present: 68, late: 22, absent: 15 },
+                { name: 'Mechanical', present: 52, late: 18, absent: 10 },
+                { name: 'Civil', present: 38, late: 15, absent: 8 },
+                { name: 'Electrical', present: 45, late: 12, absent: 5 }
+            ]
+        };
+
+        // Chart instances
+        let statusChart = null;
+        let trendChart = null;
+        let departmentChart = null;
+
+        // Chart colors
+        const colors = {
+            present: '#10b981',
+            late: '#f59e0b',
+            absent: '#ef4444',
+            excused: '#6366f1'
+        };
+
+        // Load Status Chart
+        function loadStatusChart(period) {
+            const data = demoData[period];
+            
+            // Update button states
+            document.querySelectorAll('.chart-controls button').forEach(btn => {
+                if (btn.closest('.chart-card').querySelector('#statusChart')) {
+                    btn.classList.remove('active');
+                }
+            });
+            document.getElementById('btn' + period.charAt(0).toUpperCase() + period.slice(1))?.classList.add('active');
+
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            if (statusChart) {
+                statusChart.destroy();
+            }
+
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Present', 'Late', 'Absent', 'Excused'],
+                    datasets: [{
+                        data: [data.present, data.late, data.absent, data.excused],
+                        backgroundColor: [colors.present, colors.late, colors.absent, colors.excused],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: '500' }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load Trend Chart
+        function loadTrendChart(period) {
+            const trendData = period === 'week' ? demoData.weeklyTrend : demoData.monthlyTrend;
+            
+            // Update button states
+            document.querySelectorAll('#btnTrendWeek, #btnTrendMonth').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btnTrend' + period.charAt(0).toUpperCase() + period.slice(1))?.classList.add('active');
+
+            const labels = trendData.map(item => {
+                const date = new Date(item.date);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            
+            if (trendChart) {
+                trendChart.destroy();
+            }
+
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Present',
+                            data: trendData.map(item => item.present),
+                            borderColor: colors.present,
+                            backgroundColor: colors.present + '20',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Late',
+                            data: trendData.map(item => item.late),
+                            borderColor: colors.late,
+                            backgroundColor: colors.late + '20',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Absent',
+                            data: trendData.map(item => item.absent),
+                            borderColor: colors.absent,
+                            backgroundColor: colors.absent + '20',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: '500' }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load Department Chart
+        function loadDepartmentChart() {
+            const deptData = demoData.departments;
+            
+            const ctx = document.getElementById('departmentChart').getContext('2d');
+            
+            if (departmentChart) {
+                departmentChart.destroy();
+            }
+
+            departmentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: deptData.map(d => d.name),
+                    datasets: [
+                        {
+                            label: 'Present',
+                            data: deptData.map(d => d.present),
+                            backgroundColor: colors.present,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Late',
+                            data: deptData.map(d => d.late),
+                            backgroundColor: colors.late,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Absent',
+                            data: deptData.map(d => d.absent),
+                            backgroundColor: colors.absent,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: '500' }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { display: false }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize charts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStatusChart('today');
+            loadTrendChart('week');
+            loadDepartmentChart();
+        });
+    </script>
+</body>
+</html>
+
