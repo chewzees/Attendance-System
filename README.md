@@ -9,31 +9,9 @@ A comprehensive, production-ready college attendance management system with adva
 
 ## Screenshots
 
-Dark high-contrast interface inspired by premium editorial layouts — black canvas, white primary actions, and serif display headings.
-
-### Login
-![Login page](docs/screenshots/01-login.png)
-
-### Register
-![Register page](docs/screenshots/02-register.png)
-
-### Admin Control Panel
-![Admin dashboard](docs/screenshots/03-admin-dashboard.png)
-
-### Main Dashboard
 ![Main dashboard](docs/screenshots/04-main-dashboard.png)
 
-### Face Recognition / Mark Attendance
 ![Face recognition](docs/screenshots/05-face-recognition.png)
-
-### System Check
-![System check](docs/screenshots/06-system-check.png)
-
-### Professor Dashboard
-![Professor dashboard](docs/screenshots/07-professor-dashboard.png)
-
-### Student Portal
-![Student portal](docs/screenshots/08-student-portal.png)
 
 ## Features
 
